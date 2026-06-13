@@ -7,6 +7,7 @@ if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
 
 import logging
+import os
 import traceback
 
 from fastapi import FastAPI
@@ -21,10 +22,15 @@ def create_app() -> FastAPI:
     logger.info("Creating FastAPI app")
     app = FastAPI(title="CineMind API")
 
-    # Allow local frontend during development
+    # CORS: read allowed origins from env var for production flexibility.
+    # Set ALLOWED_ORIGINS=https://your-app.vercel.app on Render.
+    # Falls back to localhost for local development.
+    raw_origins = os.environ.get("ALLOWED_ORIGINS", "http://localhost:3000")
+    allowed_origins = [o.strip() for o in raw_origins.split(",") if o.strip()]
+
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["http://localhost:3000"],
+        allow_origins=allowed_origins,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],

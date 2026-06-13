@@ -34,8 +34,8 @@ pip-delete-this-directory.txt
 .env.production.local
 *.env
 
-# Large datasets
-data/
+# Large datasets — exclude movielens raw dumps, keep runtime data
+data/movielens/
 
 # OS Files
 .DS_Store

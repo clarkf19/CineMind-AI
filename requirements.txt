@@ -5,9 +5,6 @@ scikit-surprise
 sentence-transformers
 faiss-cpu
 fastapi
-uvicorn
-matplotlib
-seaborn
-jupyter
-tqdm
+uvicorn[standard]
 python-dotenv
+tqdm
