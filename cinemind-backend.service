@@ -1,0 +1,16 @@
+[Unit]
+Description=CineMind AI FastAPI Backend Service
+After=network.target
+
+[Service]
+User=ubuntu
+WorkingDirectory=/home/ubuntu/CineMind-AI
+ExecStart=/home/ubuntu/CineMind-AI/.venv/bin/python -m uvicorn backend.main:app --host 127.0.0.1 --port 8000
+Restart=always
+RestartSec=5
+Environment="PATH=/home/ubuntu/CineMind-AI/.venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+# Update ALLOWED_ORIGINS with your deployed Vercel frontend URL
+Environment="ALLOWED_ORIGINS=http://localhost:3000,https://your-frontend.vercel.app"
+
+[Install]
+WantedBy=multi-user.target
