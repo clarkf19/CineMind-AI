@@ -105,7 +105,12 @@ class ContentBasedRecommender:
             raise ValueError(f"Movie title not found in dataset: {movie_title!r}")
 
         movie_index = self.title_to_index[normalized_title]
-        similarity_scores = list(enumerate(self.cosine_similarities[movie_index]))
+        if self.cosine_similarities is not None:
+            scores = self.cosine_similarities[movie_index]
+        else:
+            query_vector = self.tfidf_matrix[movie_index]
+            scores = cosine_similarity(query_vector, self.tfidf_matrix).flatten()
+        similarity_scores = list(enumerate(scores))
         similarity_scores = sorted(
             similarity_scores,
             key=lambda item: item[1],
@@ -153,7 +158,16 @@ class ContentBasedRecommender:
 
         self.vectorizer = TfidfVectorizer(stop_words="english")
         self.tfidf_matrix = self.vectorizer.fit_transform(self.movies["combined_features"])
-        self.cosine_similarities = cosine_similarity(self.tfidf_matrix)
+        self.cosine_similarities = None
+
+        # Memory optimization: drop heavy columns no longer needed and run garbage collector
+        self.movies = self.movies[["title", "genres", "overview"]].copy()
+
+        del movies
+        del credits
+        del merged
+        import gc
+        gc.collect()
 
         logger.info(
             "Content-based recommender ready with %d movies and %d TF-IDF terms.",

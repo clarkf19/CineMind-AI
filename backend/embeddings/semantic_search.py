@@ -151,6 +151,10 @@ class SemanticMovieSearch:
                             "id": row.get("id"),
                             "release_date": row.get("release_date")
                         }
+                # Clean up tmdb_df to free RAM
+                del tmdb_df
+                import gc
+                gc.collect()
             else:
                 logger.warning("Extra TMDB metadata not found at %s", tmdb_path)
                 self.tmdb_lookup = {}
